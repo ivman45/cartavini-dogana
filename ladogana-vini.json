@@ -9063,7 +9063,7 @@
   {
     "id": 1773148957333,
     "name": "Vignes de Bassy - Fût de Chêne",
-    "producer": "Domaine de l'aubraine",
+    "producer": "Domaine de l'Aubraine",
     "category": "Bianco",
     "region": "Borgogna",
     "vintage": "2023",
@@ -9078,7 +9078,9 @@
     "isNaturale": false,
     "isBiologico": false,
     "isBiodinamico": false,
-    "so2": false
+    "so2": false,
+    "markup": 200,
+    "showGlass": true
   },
   {
     "id": 1773148957334,
