@@ -9496,22 +9496,5 @@
     "markup": 200,
     "stock": 1,
     "id": 1773413882137
-  },
-  {
-    "name": "romane conti",
-    "producer": "romanee",
-    "category": "Rosso",
-    "vintage": "",
-    "region": "Borgogna",
-    "grapes": "pinot nero",
-    "notes": "",
-    "price": 8250,
-    "priceByGlass": null,
-    "priceAsporto": null,
-    "costPrice": 5000,
-    "markup": 200,
-    "stock": 1,
-    "id": 1773420865801,
-    "showGlass": true
   }
 ]
