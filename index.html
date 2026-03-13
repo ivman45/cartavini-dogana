@@ -807,7 +807,6 @@ ${sections}
             {syncSt==="syncing"?"↻":syncSt==="err"?"⚠":"↻"}
           </button>
           {syncSt==="ok"&&<span title="Sincronizzato" style={{fontSize:"13px",color:"#2e7d32",marginRight:2}}>✓</span>}
-          <button className="btn btn-ico" title="Stampa" onClick={doPrint}>🖨</button>
           <button className="btn" style={{fontSize:11,fontWeight:600,letterSpacing:".06em",padding:"4px 8px"}} onClick={()=>setLang(l=>l==="it"?"en":"it")}>{lang==="it"?"EN":"IT"}</button>
           <button className="btn" onClick={()=>{if(auth){setShowAdmin(true);setShowForm(false);setTab("lista");}else setShowLogin(true);}}>⚙</button>
         </div>
