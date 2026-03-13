@@ -803,10 +803,6 @@ ${sections}
           <span style={{fontFamily:"'Cormorant Garamond',serif",fontSize:15,fontWeight:400,letterSpacing:".18em",textTransform:"uppercase",color:"rgba(255,255,255,0.75)"}}>Carta dei Vini</span>
         </div>
         <div className="hdr-right">
-          <button className="btn btn-ico" title="Aggiorna dalla rete" onClick={forceRefresh} style={{fontSize:"15px",opacity:syncSt==="syncing"?0.5:1}}>
-            {syncSt==="syncing"?"↻":syncSt==="err"?"⚠":"↻"}
-          </button>
-          {syncSt==="ok"&&<span title="Sincronizzato" style={{fontSize:"13px",color:"#2e7d32",marginRight:2}}>✓</span>}
           <button className="btn" style={{fontSize:11,fontWeight:600,letterSpacing:".06em",padding:"4px 8px"}} onClick={()=>setLang(l=>l==="it"?"en":"it")}>{lang==="it"?"EN":"IT"}</button>
           <button className="btn" onClick={()=>{if(auth){setShowAdmin(true);setShowForm(false);setTab("lista");}else setShowLogin(true);}}>⚙</button>
         </div>
@@ -1168,6 +1164,7 @@ ${sections}
                       setSyncSt("syncing");toast("↻ Pubblicazione in corso…");
                       ghSave(wines).then(()=>{setSyncSt("ok");toast("✓ Pubblicato su GitHub");}).catch(e=>{setSyncSt("err");toast("⚠ Errore: "+e.message);});
                     }}>☁ Pubblica su GitHub</button>
+                    <button className="btn btn-g" onClick={forceRefresh} style={{opacity:syncSt==="syncing"?0.5:1}}>↻ Aggiorna da GitHub {syncSt==="ok"?"✓":syncSt==="err"?"⚠":""}</button>
                     <button className="btn btn-g" onClick={()=>{
                       const fixed = wines.map(fixWineEncoding);
                       setWines(fixed); saveLS(CFG.STORAGE_KEY, fixed);
