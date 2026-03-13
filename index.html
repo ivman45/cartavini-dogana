@@ -418,6 +418,7 @@ function App() {
   const [auth,setAuth]           = useState(false);
   const [syncSt,setSyncSt]       = useState("idle");
   const [adminSearch,setAdminSearch] = useState("");
+  const [ghTokenInput,setGhTokenInput] = useState(()=>localStorage.getItem("ladogana_gh_token")||"");
   const [showAdmin,setShowAdmin] = useState(false);
   const [tab,setTab]             = useState("lista");
   const [editWine,setEditWine]   = useState(null);
@@ -1094,8 +1095,8 @@ ${sections}
                   <h3>GitHub Token</h3>
                   <p>Inseriscilo una volta — viene salvato su questo dispositivo e non serve più modificare il file.</p>
                   <div style={{display:"flex",gap:8,alignItems:"center",margin:"10px 0 20px"}}>
-                    <input type="password" className="f-inp" style={{flex:1,fontFamily:"monospace",fontSize:12}} placeholder="github_pat_…" defaultValue={localStorage.getItem("ladogana_gh_token")||""} id="gh-token-input"/>
-                    <button className="btn btn-p" onClick={()=>{const v=document.getElementById("gh-token-input").value.trim();if(!v){toast("⚠ Token vuoto");return;}localStorage.setItem("ladogana_gh_token",v);toast("✓ Token salvato");}}>Salva</button>
+                    <input type="text" className="f-inp" style={{flex:1,fontFamily:"monospace",fontSize:11}} placeholder="github_pat_…" value={ghTokenInput} onChange={e=>setGhTokenInput(e.target.value)}/>
+                    <button className="btn btn-p" onClick={()=>{const v=ghTokenInput.trim();if(!v){toast("⚠ Token vuoto");return;}localStorage.setItem("ladogana_gh_token",v);toast("✓ Token salvato");}}>Salva</button>
                   </div>
                   <h3>Esporta backup</h3>
                   <p>Scarica tutti i vini in formato JSON. Usalo come backup o per trasferire i dati.</p>
