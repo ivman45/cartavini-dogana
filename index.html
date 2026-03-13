@@ -306,9 +306,11 @@ const ghToken = ()=>localStorage.getItem("ladogana_gh_token")||"";
 const ghHdrs = ()=>({"Authorization":`Bearer ${ghToken()}`,"Accept":"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28","Content-Type":"application/json"});
 let _ghSha = null;
 const ghLoad = async()=>{
-  // API pubblica senza token — dati sempre freschi
-  const r=await fetch(GH_API+`?t=${Date.now()}`,{cache:"no-store"});
+  const hdrs = ghToken() ? ghHdrs() : {"Accept":"application/vnd.github+json"};
+  const r=await fetch(GH_API+`?t=${Date.now()}`,{cache:"no-store",headers:hdrs});
   if(r.status===404)return null;
+  if(r.status===401)throw new Error("Token non valido — inseriscilo in Admin → Backup");
+  if(r.status===403)throw new Error("Rate limit — inserisci il token in Admin → Backup");
   if(!r.ok)throw new Error("GH "+r.status);
   const d=await r.json();
   _ghSha=d.sha;
@@ -434,6 +436,9 @@ function App() {
   const qrRef   = useRef(null);
 
   useEffect(()=>{
+    // leggi token dall'URL se presente: ?token=github_pat_...
+    const urlToken = new URLSearchParams(window.location.search).get("token");
+    if(urlToken){localStorage.setItem("ladogana_gh_token",urlToken);setGhTokenInput(urlToken);}
     const s=loadLS(CFG.STORAGE_KEY);setWines(s||SAMPLE);if(!s)saveLS(CFG.STORAGE_KEY,SAMPLE);
     const p=loadLS(CFG.PROD_KEY);setProducers(p||[]);
     const l=loadLS(CFG.LOG_KEY);setChangelog(l||[]);
@@ -1093,7 +1098,7 @@ ${sections}
               {tab==="io"&&(
                 <div className="io">
                   <h3>GitHub Token</h3>
-                  <p>Inseriscilo una volta — viene salvato su questo dispositivo e non serve più modificare il file.</p>
+                  <p>Inseriscilo qui oppure apri la pagina con <code style={{fontSize:10,background:"#f5f5f5",padding:"1px 4px"}}>?token=…</code> nell'URL — viene salvato automaticamente su quel dispositivo.</p>
                   <div style={{display:"flex",gap:8,alignItems:"center",margin:"10px 0 20px"}}>
                     <input type="text" className="f-inp" style={{flex:1,fontFamily:"monospace",fontSize:11}} placeholder="github_pat_…" value={ghTokenInput} onChange={e=>setGhTokenInput(e.target.value)}/>
                     <button className="btn btn-p" onClick={()=>{const v=ghTokenInput.trim();if(!v){toast("⚠ Token vuoto");return;}localStorage.setItem("ladogana_gh_token",v);toast("✓ Token salvato");}}>Salva</button>
