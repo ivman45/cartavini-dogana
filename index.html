@@ -263,10 +263,11 @@ const CFG = {
 
 const CATS = [
   { id:"all",       label:"Tutti",             color:null },
-  { id:"Bianco",    label:"Bianchi",           color:"var(--c-bianco)" },
+  { id:"Champagne", label:"Champagne",         color:"var(--c-bollicine)" },
   { id:"Bollicine", label:"Bollicine",         color:"var(--c-bollicine)" },
-  { id:"Rosato",    label:"Rosati",            color:"var(--c-rosato)" },
+  { id:"Bianco",    label:"Bianchi",           color:"var(--c-bianco)" },
   { id:"Rosso",     label:"Rossi",             color:"var(--c-rosso)" },
+  { id:"Rosato",    label:"Rosati",            color:"var(--c-rosato)" },
   { id:"Dolce",     label:"Dolci",             color:"var(--c-dolce)" },
 ];
 
@@ -444,7 +445,7 @@ function App() {
   const [lang,setLang] = useState('it');
   const T = {
     it:{
-      cats:{Bianco:"Bianchi",Bollicine:"Bollicine",Rosato:"Rosati",Rosso:"Rossi",Dolce:"Dolci"},
+      cats:{Bianco:"Bianchi",Bollicine:"Bollicine",Champagne:"Champagne",Rosato:"Rosati",Rosso:"Rossi",Dolce:"Dolci"},
       mescita:"◈ Mescita", searchPh:"Cerca vino, produttore…",
       allZone:"Tutte le zone", allAnnate:"Tutte le annate", allVitigni:"Tutti i vitigni",
       mescitaEmpty:"Nessun vino disponibile al calice al momento.",
@@ -455,7 +456,7 @@ function App() {
       labels:(n)=>`${n} etichett${n===1?"a":"e"}`, wineCount:(n)=>`${n} etichett${n===1?"a":"e"}`
     },
     en:{
-      cats:{Bianco:"Whites",Bollicine:"Sparkling",Rosato:"Rosé",Rosso:"Reds",Dolce:"Sweet"},
+      cats:{Bianco:"Whites",Bollicine:"Sparkling",Champagne:"Champagne",Rosato:"Rosé",Rosso:"Reds",Dolce:"Sweet"},
       mescita:"◈ By the Glass", searchPh:"Search wine, producer…",
       allZone:"All regions", allAnnate:"All vintages", allVitigni:"All grapes",
       mescitaEmpty:"No wines available by the glass at the moment.",
@@ -537,7 +538,7 @@ function App() {
   const filtersActive = fRegion!=="all"||fVintage!=="all"||fGrapes!=="all"||search;
   const resetFilters = ()=>{setFRegion("all");setFVintage("all");setFGrapes("all");setSearch("");};
 
-  const CAT_ORDER = ["Bianco","Bollicine","Rosato","Rosso","Dolce"];
+  const CAT_ORDER = ["Champagne","Bollicine","Bianco","Rosso","Rosato","Dolce"];
   const grouped = useMemo(()=>{
     const sorted=[...filtered].sort((a,b)=>{const r=(a.region||"").localeCompare(b.region||"","it");if(r!==0)return r;const ci=CAT_ORDER.indexOf(a.category)-CAT_ORDER.indexOf(b.category);if(ci!==0)return ci;return(a.name||"").localeCompare(b.name||"","it");});
     const map={},order=[];for(const w of sorted){const r=w.region||"—";if(!map[r]){map[r]=[];order.push(r);}map[r].push(w);}
@@ -547,7 +548,7 @@ function App() {
   const updStock=(id,d)=>persist(wines.map(w=>w.id===id?{...w,stock:Math.max(0,(parseInt(w.stock)||0)+d)}:w));
 
   const doPrint = () => {
-    const CAT_ORDER_P = ["Bianco","Bollicine","Rosato","Rosso","Dolce"];
+    const CAT_ORDER_P = ["Champagne","Bollicine","Bianco","Rosso","Rosato","Dolce"];
     const CAT_LABELS  = {"Bianco":"Bianchi","Bollicine":"Bollicine","Rosato":"Rosati","Rosso":"Rossi","Dolce":"Dolci"};
 
     const grouped = {};
