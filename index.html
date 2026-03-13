@@ -256,7 +256,7 @@ const CFG = {
   PROD_KEY:      "ladogana_producers_v1",
   LOG_KEY:       "ladogana_log_v1",
   LOGO_URL:      "https://usercontent.one/wp/www.ladogana-lignano.it/wp-content/uploads/2023/02/Logo_LaDogana_black-1.png",
-  GH_TOKEN:  "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",
+  GH_TOKEN:  "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",
   GH_OWNER:  "ivman45",
   GH_REPO:   "vinidogana",
   GH_FILE:   "ladogana-vini.json",
@@ -306,9 +306,11 @@ const GH_API = `https://api.github.com/repos/${CFG.GH_OWNER}/${CFG.GH_REPO}/cont
 const ghHdrs = ()=>({"Authorization":`Bearer ${CFG.GH_TOKEN}`,"Accept":"application/vnd.github+json","X-GitHub-Api-Version":"2022-11-28","Content-Type":"application/json"});
 let _ghSha = null;
 const ghLoad = async()=>{
-  const r=await fetch(GH_API+`?t=${Date.now()}`,{headers:{...ghHdrs(),"Cache-Control":"no-cache"}});
+  const r=await fetch(GH_API+`?t=${Date.now()}`,{cache:"no-store",headers:ghHdrs()});
   if(r.status===404)return null;
-  if(!r.ok)throw new Error("GH "+r.status);
+  if(r.status===401)throw new Error("Token non valido (401)");
+  if(r.status===403)throw new Error("Accesso negato (403)");
+  if(!r.ok){const e=await r.json().catch(()=>({}));throw new Error(e.message||"GH "+r.status);}
   const d=await r.json();_ghSha=d.sha;
   return JSON.parse(atob(d.content.replace(/\n/g,"")));
 };
@@ -435,6 +437,10 @@ function App() {
     const p=loadLS(CFG.PROD_KEY);setProducers(p||[]);
     const l=loadLS(CFG.LOG_KEY);setChangelog(l||[]);
     setLoading(false);
+    setSyncSt("syncing");
+    ghLoad().then(data=>{if(data){setWines(data);saveLS(CFG.STORAGE_KEY,data);}setSyncSt("ok");}).catch(()=>setSyncSt("err"));
+    const iv=setInterval(()=>{ghLoad().then(data=>{if(data){setWines(data);saveLS(CFG.STORAGE_KEY,data);}}).catch(()=>{});},5*60*1000);
+    return()=>clearInterval(iv);
   },[]);
 
   const persist = useCallback(list=>{
@@ -448,6 +454,10 @@ function App() {
     setChangelog(prev=>{const next=[entry,...prev].slice(0,100);saveLS(CFG.LOG_KEY,next);return next;});
   },[]);
   const toast   = msg=>{setNotif(msg);clearTimeout(notifT.current);notifT.current=setTimeout(()=>setNotif(null),2600);};
+  const forceRefresh = useCallback(()=>{
+    setSyncSt("syncing");
+    ghLoad().then(data=>{if(data){setWines(data);saveLS(CFG.STORAGE_KEY,data);}setSyncSt("ok");toast("✓ Aggiornato");}).catch(e=>{setSyncSt("err");toast("⚠ "+( e?.message||"Errore"));console.error("ghLoad error:",e);});
+  },[]);
 
   const filtered = useMemo(()=>wines.filter(w=>{
     if(w.visible===false) return false;
@@ -726,9 +736,10 @@ ${sections}
           }
         </div>
         <div className="hdr-right">
-          {syncSt==="syncing"&&<span title="Sincronizzazione…" style={{fontSize:"16px",animation:"spin 1s linear infinite",display:"inline-block"}}>↻</span>}
-          {syncSt==="ok"&&<span title="Sincronizzato con GitHub" style={{fontSize:"14px",color:"#2e7d32"}}>✓</span>}
-          {syncSt==="err"&&<span title="Errore sincronizzazione" style={{fontSize:"14px",color:"#c62828"}}>⚠</span>}
+          <button className="btn btn-ico" title="Aggiorna dalla rete" onClick={forceRefresh} style={{fontSize:"15px",opacity:syncSt==="syncing"?0.5:1}}>
+            {syncSt==="syncing"?"↻":syncSt==="err"?"⚠":"↻"}
+          </button>
+          {syncSt==="ok"&&<span title="Sincronizzato" style={{fontSize:"13px",color:"#2e7d32",marginRight:2}}>✓</span>}
           <button className="btn btn-ico" title="Stampa" onClick={doPrint}>🖨</button>
           <button className="btn" onClick={()=>{if(auth){setShowAdmin(true);setShowForm(false);setTab("lista");}else setShowLogin(true);}}>⚙</button>
         </div>
