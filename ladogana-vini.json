@@ -9344,7 +9344,7 @@
   },
   {
     "id": 1773148957347,
-    "name": "Volnay Clos des angles 1er Cru",
+    "name": "Volnay Clos des Angles 1er Cru",
     "producer": "Nicolas Rossignol",
     "category": "Rosso",
     "region": "Borgogna",
@@ -9360,7 +9360,9 @@
     "isNaturale": false,
     "isBiologico": false,
     "isBiodinamico": false,
-    "so2": false
+    "so2": false,
+    "markup": 200,
+    "showGlass": true
   },
   {
     "id": 1773148957348,
